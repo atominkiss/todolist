@@ -4,6 +4,7 @@ package net.protoprint.todolist.persist.entity;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Data
 @Entity
@@ -19,5 +20,13 @@ public class User {
 
 	@Column(nullable = false)
 	private String password;
+
+	@OneToMany(
+			mappedBy = "user",
+			cascade = CascadeType.ALL,
+			//удалять поля у которых отсутствует связь
+			orphanRemoval = true
+	)
+	private List<ToDo> todos;
 
 }
