@@ -43,7 +43,7 @@ public class UserService {
 		return Optional.empty();
 	}
 
-	public Optional<String> getCurrentUser() {
+	public static Optional<String> getCurrentUser() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		if (!(authentication instanceof AnonymousAuthenticationToken)) {
 			return Optional.of(authentication.getName());
