@@ -1,18 +1,17 @@
 package net.protoprint.todolist.service;
 
 import net.protoprint.todolist.persist.entity.ToDo;
-import net.protoprint.todolist.persist.entity.User;
 import net.protoprint.todolist.persist.repo.ToDoRepo;
 import net.protoprint.todolist.persist.repo.UserRepo;
 import net.protoprint.todolist.repr.ToDoRepr;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
-import static net.protoprint.todolist.service.UserService.getCurrentUser;
+import static net.protoprint.todolist.security.Utils.getCurrentUser;
 
 @Service
 @Transactional
@@ -32,23 +31,21 @@ public class ToDoService {
 				.map(ToDoRepr::new);
 	}
 
-	public List<ToDoRepr> fingToDosByUserId(Long userId) {
-		return toDoRepo.fingToDosByUserId(userId);
+	public List<ToDoRepr> findToDoByUser_Username(String username) {
+		return toDoRepo.findToDoByUser_Username(username);
 	}
 
 	public void save(ToDoRepr toDoRepr) {
-		Optional<String> currentUser = getCurrentUser();
-		if (currentUser.isPresent()) {
-			Optional<User> optUser = userRepo.getUserByUsername(currentUser.get());
-			if (optUser.isPresent()) {
+		getCurrentUser()
+				.flatMap(userRepo::getUserByUsername)
+				.ifPresent(user -> {
 				ToDo toDo = new ToDo();
 				toDo.setId(toDoRepr.getId());
 				toDo.setDescription(toDoRepr.getDescription());
 				toDo.setTargetDate(toDoRepr.getTargetDate());
-				toDo.setUser(optUser.get());
-				toDoRepo.save(toDo);
-			}
-		}
+					toDo.setUser(user);
+					toDoRepo.save(toDo);
+				});
 	}
 
 	public void delete(Long id) {

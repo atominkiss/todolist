@@ -13,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
 	private PasswordEncoder passwordEncoder;
 	private UserAuthService userAuthService;
 
@@ -27,9 +28,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	}
 
 	@Override
-	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+	protected void configure(AuthenticationManagerBuilder auth) {
 		auth.authenticationProvider(authenticationProvider());
-		super.configure(auth);
 	}
 
 	//Описываем как нужно защищать наше предложение от неавторизованного доступа
@@ -37,7 +37,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		http
 				.authorizeRequests()
-				.antMatchers("/").authenticated()
+				.antMatchers("/todo/*").authenticated()
 				.and()
 				.formLogin()
 				.loginPage("/login")

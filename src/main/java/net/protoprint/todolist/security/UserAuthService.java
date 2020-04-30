@@ -1,6 +1,6 @@
 package net.protoprint.todolist.security;
 
-import net.protoprint.todolist.persist.entity.User;
+import lombok.extern.slf4j.Slf4j;
 import net.protoprint.todolist.persist.repo.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -8,11 +8,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
+import javax.transaction.Transactional;
 import java.util.Collections;
-import java.util.Optional;
 
+@Slf4j
 @Service
 @Transactional
 public class UserAuthService implements UserDetailsService {
@@ -26,15 +26,13 @@ public class UserAuthService implements UserDetailsService {
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		Optional<User> optUser = userRepo.getUserByUsername(username);
-		if (!optUser.isPresent()) {
-			throw new UsernameNotFoundException("User not found!");
-		}
+		log.info("Spring security loading user by name");
 
-		return new org.springframework.security.core.userdetails.User(
-				optUser.get().getUsername(),
-				optUser.get().getPassword(),
-				Collections.singletonList(new SimpleGrantedAuthority("USER"))
-		);
+		return userRepo.getUserByUsername(username)
+				.map(user -> new org.springframework.security.core.userdetails.User(
+						user.getUsername(),
+						user.getPassword(),
+						Collections.singletonList(new SimpleGrantedAuthority("USER"))))
+				.orElseThrow(() -> new UsernameNotFoundException("User not found"));
 	}
 }
