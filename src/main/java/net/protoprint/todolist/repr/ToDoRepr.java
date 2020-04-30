@@ -1,7 +1,6 @@
 package net.protoprint.todolist.repr;
 
 import lombok.Data;
-import net.protoprint.todolist.persist.entity.ToDo;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotEmpty;
@@ -23,11 +22,11 @@ public class ToDoRepr {
 	@NotNull
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private LocalDate targetDate;
-
-	public ToDoRepr(ToDo toDo) {
-		this.id = toDo.getId();
-		this.description = toDo.getDescription();
-		this.username = toDo.getUser().getUsername();
-	}
+//
+//	public ToDoRepr(ToDo toDo) {
+//		this.id = toDo.getId();
+//		this.description = toDo.getDescription();
+//		this.username = toDo.getUser().getUsername();
+//	}
 
 }

@@ -14,8 +14,7 @@ public interface ToDoRepo extends CrudRepository<ToDo, Long> {
 
 	//запрос на вытаскивание из базы списка тудушек связанных с ID конкретного пользователя
 	@Query("select new net.protoprint.todolist.repr.ToDoRepr(t) from ToDo t " +
-			"inner join fetch User u " +
-			"where u.id = :userId")
+			"where t.user.id = :userId")
 	List<ToDoRepr> fingToDosByUserId(@Param("userId") Long userId);
 
 }
